@@ -104,3 +104,7 @@ checkpoints/
 # Other IDE files
 *.sublime-workspace
 *.sublime-project
+
+
+# Test file
+local_test/

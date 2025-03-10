@@ -20,13 +20,15 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-To directly use the model, provided you have the checkpoint, you can directly use the following:
+To directly use the model, provided you have a checkpoint, you can directly use the following:
 
 ```
 python main.py --input path/to/image_folder --output path/to/output.csv
 ```
 
 This will output a csv file containing two columns, one being the image name and the other the predicted angle.
+
+A trained checkpoint is available to [download](https://drive.google.com/file/d/1myCTKFY4jt1xVDdf0EM2H3Vt0TCKVS5W/view?usp=drive_link), it needs to then be refered to in the config.py file.
 
 ## Features
 - Rotation Angle Prediction: Uses a Convolutional Neural Network based on EfficientNet-B3 to predict the rotation angle of an image.
