@@ -39,3 +39,19 @@ class RotationDataset(Dataset):
         angle_tensor = torch.tensor([angle_sin, angle_cos], dtype=torch.float32)
 
         return rotated_image, angle_tensor  # Now (batch_size, 2)
+
+class ImageDataset(Dataset):
+    def __init__(self, image_folder, transform=None):
+        self.image_folder = image_folder
+        self.transform = transform
+        self.image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+
+    def __len__(self):
+        return len(self.image_files)
+
+    def __getitem__(self, idx):
+        img_name = os.path.join(self.image_folder, self.image_files[idx])
+        image = Image.open(img_name).convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+        return image, self.image_files[idx]
