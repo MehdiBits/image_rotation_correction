@@ -9,29 +9,14 @@ import csv
 import numpy as np
 from datasets_handling.rotation_dataset import ImageDataset
 
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'Device is set to : {device}')
 
-# Load model
 model = RotationEfficientNet().to(device)
 load_checkpoint(config.CHECKPOINT_PATH, model)
 model.eval()
 
-def predict_rotation_batch(data_loader):
-    results = []
-    with torch.no_grad():
-        for images, image_names in data_loader:
-            images = images.to(device)
-            outputs = model(images)
-
-            for i, output in enumerate(outputs):
-                sin_val, cos_val = output.cpu().numpy()
-                predicted_angle = np.arctan2(sin_val, cos_val) * (180 / np.pi)
-                predicted_angle = predicted_angle % 360
-                results.append((image_names[i], predicted_angle))
-                print(f"Predicted Rotation Angle for {image_names[i]}: {predicted_angle:.2f}°")
-
-    return results
 
 def main(input_folder, output_csv):
     dataset = ImageDataset(image_folder=input_folder)

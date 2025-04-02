@@ -22,8 +22,8 @@ transform = transforms.Compose([
 ])
 
 # Load datasets
-train_dataset = RotationDataset(config.TRAIN_DIR, transform=transform)
-val_dataset = RotationDataset(config.VAL_DIR, transform=transform)
+train_dataset = RotationDataset(config.TRAIN_DIR, transform=transform, rotation_type='sym')
+val_dataset = RotationDataset(config.VAL_DIR, transform=transform,rotation_type='sym')
 
 train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True, num_workers=4)
 val_loader = DataLoader(val_dataset, batch_size=config.BATCH_SIZE, shuffle=False, num_workers=4)
@@ -48,7 +48,7 @@ def train():
     for epoch in range(config.NUM_EPOCHS):
         model.train()
         running_loss = 0.0
-        angle_errors = []  # Store angle errors
+        angle_errors = []
 
         loop = tqdm(enumerate(train_loader), total=len(train_loader), leave=True)
 
@@ -56,7 +56,7 @@ def train():
             images, angles = images.to(device), angles.to(device)
 
             optimizer.zero_grad()
-            outputs = model(images)  # outputs -> (batch, 2) -> (sinθ, cosθ)
+            outputs = model(images)
 
             loss = criterion(outputs, angles)
             loss.backward()
@@ -64,7 +64,7 @@ def train():
 
             running_loss += loss.item()
 
-            # Convert sin/cos to degrees for error tracking
+
             pred_sin, pred_cos = outputs[:, 0], outputs[:, 1]
             true_sin, true_cos = angles[:, 0], angles[:, 1]
 
@@ -74,18 +74,18 @@ def train():
             angle_error = torch.abs(true_angles - pred_angles)
             angle_errors.extend(angle_error.cpu().detach().numpy())
 
-            # Update progress bar description
+
             loop.set_description(f"Epoch [{epoch+1}/{config.NUM_EPOCHS}]")
             loop.set_postfix(loss=loss.item())
 
         scheduler.step()
 
         avg_train_loss = running_loss / len(train_loader)
-        avg_angle_error = np.mean(angle_errors)  # Mean Absolute Error in degrees
+        avg_angle_error = np.mean(angle_errors)
         print(f"📉 Epoch {epoch+1} Training Loss: {avg_train_loss:.4f}")
         print(f"🔹 Avg Training Angle Error: {avg_angle_error:.2f}°\n")
 
-        # Validation Step
+
         model.eval()
         val_loss = 0.0
         val_angle_errors = []

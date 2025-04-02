@@ -2,18 +2,20 @@ import os
 import random
 import torch
 from torch.utils.data import Dataset
+from utils import rotate_image_symmetry
 from PIL import Image
 import numpy as np
 import config
 
 class RotationDataset(Dataset):
-    def __init__(self, image_dir, transform=None):
+    def __init__(self, image_dir, transform=None, rotation_type='blank'):
         self.image_paths = [
             os.path.join(image_dir, img) 
             for img in os.listdir(image_dir) 
             if img.lower().endswith((".jpg", ".png", ".jpeg"))
         ]
         self.transform = transform
+        self.rotation_type = rotation_type
 
     def __len__(self):
         return len(self.image_paths)
@@ -24,7 +26,10 @@ class RotationDataset(Dataset):
 
         # Randomly rotate the image
         angle = random.randint(-config.MAX_ANGLE, config.MAX_ANGLE)
-        rotated_image = image.rotate(angle)
+        if self.rotation_type == 'blank':
+            rotated_image = image.rotate(angle)
+        elif self.rotation_type == 'sym':
+            rotated_image = rotate_image_symmetry(image, angle)
 
         # Apply transforms
         if self.transform:
@@ -39,19 +44,3 @@ class RotationDataset(Dataset):
         angle_tensor = torch.tensor([angle_sin, angle_cos], dtype=torch.float32)
 
         return rotated_image, angle_tensor  # Now (batch_size, 2)
-
-class ImageDataset(Dataset):
-    def __init__(self, image_folder, transform=None):
-        self.image_folder = image_folder
-        self.transform = transform
-        self.image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-
-    def __len__(self):
-        return len(self.image_files)
-
-    def __getitem__(self, idx):
-        img_name = os.path.join(self.image_folder, self.image_files[idx])
-        image = Image.open(img_name).convert("RGB")
-        if self.transform:
-            image = self.transform(image)
-        return image, self.image_files[idx]
