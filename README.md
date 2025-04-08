@@ -23,7 +23,8 @@ pip install -r requirements.txt
 To directly use the model, provided you have a checkpoint, you can directly use the following:
 
 ```
-python main.py --input path/to/image_folder --output path/to/output.csv
+cd src
+python -m image_rotation_correction/main.py --input path/to/image_folder --output path/to/output.csv
 ```
 
 This will output a csv file containing two columns, one being the image name and the other the predicted angle.

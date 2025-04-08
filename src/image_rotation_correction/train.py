@@ -4,12 +4,14 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import transforms
-from models.efficientnet import RotationEfficientNet
-from rotation_estimation.src.image_rotation_correction.datasets_handling.datasets import RotationDataset
-from utils import save_checkpoint, load_checkpoint
-import config
 from tqdm import tqdm  
 import numpy as np
+
+from image_rotation_correction.models.efficientnet import RotationEfficientNet
+from image_rotation_correction.datasets_handling.datasets import RotationDataset
+from image_rotation_correction.utils import save_checkpoint, load_checkpoint
+import image_rotation_correction.config as config
+
 
 # Device configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -39,7 +41,6 @@ scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.5)
 # Load checkpoint if resuming training
 if config.LOAD_MODEL:
     load_checkpoint(config.CHECKPOINT_PATH, model, optimizer)
-
 
 
 def train():
