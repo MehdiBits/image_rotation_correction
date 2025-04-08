@@ -5,7 +5,7 @@ from PIL import Image
 import torch
 from torchvision import transforms
 
-from image_rotation_correction.config import DEVICE, CHECKPOINT_PATH
+from image_rotation_correction.config import DEVICE, CHECKPOINT_PATH, LOAD_MODEL
 from image_rotation_correction.models.efficientnet import RotationEfficientNet
 from image_rotation_correction.utils import load_checkpoint
 
@@ -15,7 +15,7 @@ class RotationEfficientNetSingleton:
     """
     _instance = None
 
-    def __new__(cls, device=DEVICE):
+    def __new__(cls, device=DEVICE, load_model=True):
         """
         Creates or retrieves the singleton instance of RotationEfficientNet.
 
@@ -29,7 +29,9 @@ class RotationEfficientNetSingleton:
             print(f"Loading RotationEfficientNet model on {device}...")
             cls._instance = super(RotationEfficientNetSingleton, cls).__new__(cls)
             cls._instance.model = RotationEfficientNet().to(device)
-            load_checkpoint(CHECKPOINT_PATH, cls._instance.model)
+            if LOAD_MODEL and load_model:
+                load_checkpoint(CHECKPOINT_PATH, cls._instance.model)
+                print("Model loaded from checkpoint.")
             cls._instance.device = device
             cls._instance.model.eval()
         return cls._instance

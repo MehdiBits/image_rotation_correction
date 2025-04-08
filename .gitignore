@@ -108,3 +108,4 @@ checkpoints/
 
 # Test file
 local_test/
+src/image_rotation_correction.egg-info/
