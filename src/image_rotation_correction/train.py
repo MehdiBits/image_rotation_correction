@@ -5,7 +5,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from models.efficientnet import RotationEfficientNet
-from datasets_handling.rotation_dataset import RotationDataset
+from rotation_estimation.src.image_rotation_correction.datasets_handling.datasets import RotationDataset
 from utils import save_checkpoint, load_checkpoint
 import config
 from tqdm import tqdm  
