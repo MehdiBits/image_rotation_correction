@@ -58,7 +58,6 @@ cache/
 
 # Conda environment files
 *.conda
-*.yml
 *.yaml
 
 # Results and output files
